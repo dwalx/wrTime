@@ -40,8 +40,9 @@ private:
 
     void setBtnSetTimeMode();
     int  iBtnSetTimeMode;
-    const int btnSetTimeModeTime1 = 1;
-    const int btnSetTimeModeTime2 = 2;
+    quint64 u64Time2Id;
+    static const int btnSetTimeModeTime1 = 1;
+    static const int btnSetTimeModeTime2 = 2;
 
 private slots:
 

@@ -22,6 +22,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QPalette pal;
     pal.setColor(QPalette::WindowText, m > 0 ? Qt::green : Qt::red);
     ui->lcdMinutes->setPalette(pal);
+
+    setBtnSetTimeMode();
 }
 
 int  MainWindow::calcTimeMonth(int month, int year)
@@ -171,10 +173,30 @@ void MainWindow::loadTimeMonth(QList<TimeEntry> &tm, int month, int year)
 
 void MainWindow::setBtnSetTimeMode()
 {
-
+    QString today = QDate::currentDate().toString("yyyy.MM.dd");;
+    QSqlQuery q;
+    QString sql = QString("select key, time1, time2 from wrtime where date = '%1' order by time1 desc limit 1;").arg(today);
+    q.exec(sql);
+    if (q.next())
+    {
+        if (q.value("time2").isNull()) iBtnSetTimeMode = btnSetTimeModeTime2;
+        else iBtnSetTimeMode = btnSetTimeModeTime1;
+        u64Time2Id = q.value("key").toULongLong();
+    }
+    switch (iBtnSetTimeMode)
+    {
+        case btnSetTimeModeTime1: ui->btnSetTime->setText("Добавить"); break;
+        case btnSetTimeModeTime2: ui->btnSetTime->setText("Закрыть"); break;
+    }
 }
 
 void MainWindow::on_btnSetTime_clicked()
 {
 
+    switch (iBtnSetTimeMode)
+    {
+        case btnSetTimeModeTime1: break;
+        case btnSetTimeModeTime2: break;
+    }
+    setBtnSetTimeMode();
 }
