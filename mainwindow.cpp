@@ -22,7 +22,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QPalette pal;
     pal.setColor(QPalette::WindowText, m > 0 ? Qt::green : Qt::red);
     ui->lcdMinutes->setPalette(pal);
-
+//555
     setBtnSetTimeMode();
 }
 
