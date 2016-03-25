@@ -190,7 +190,8 @@ void MainWindow::fillTable()
     {
         ui->tblTime->setItem(row, 0, new QTableWidgetItem(it.date));
         ui->tblTime->setItem(row, 1, new QTableWidgetItem(it.time1));
-        ui->tblTime->setItem(row++, 2, new QTableWidgetItem(it.time2));
+        ui->tblTime->setItem(row, 2, new QTableWidgetItem(it.time2));
+        row++;
     }
 }
 
