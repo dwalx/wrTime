@@ -20,7 +20,7 @@ MainWindow::MainWindow(QWidget *parent) :
     int m = calcTimeMonth(date.month(), date.year());
     ui->lcdMinutes->display(QString::number(m));
     QPalette pal;
-    pal.setColor(QPalette::WindowText, m > 0 ? Qt::green : Qt::red);
+    pal.setColor(QPalette::WindowText, m >= 0 ? Qt::green : Qt::red);
     ui->lcdMinutes->setPalette(pal);
 
     setBtnSetTimeMode();
