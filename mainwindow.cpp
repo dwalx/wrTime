@@ -22,8 +22,11 @@ MainWindow::MainWindow(QWidget *parent) :
     QPalette pal;
     pal.setColor(QPalette::WindowText, m > 0 ? Qt::green : Qt::red);
     ui->lcdMinutes->setPalette(pal);
-//555
+
     setBtnSetTimeMode();
+
+    loadTimeMonth(times, date.month(), date.year());
+    fillTable();
 }
 
 int  MainWindow::calcTimeMonth(int month, int year)
@@ -160,15 +163,34 @@ void MainWindow::loadTimeMonth(QList<TimeEntry> &tm, int month, int year)
    d2.sprintf("%04d.%02d.%02d", year, month, d.daysInMonth());
 
    QSqlQuery q;
-   QString sql = QString("select time1, time2 from wrtime where date >= '%1' and date <= '%2' and time1 is not null and time2 is not null ;").arg(d1).arg(d2);
+   QString sql = QString("select key, date, time1, time2 from wrtime where date >= '%1' and date <= '%2' and time1 is not null and time2 is not null ;").arg(d1).arg(d2);
    q.exec(sql);
    while (q.next())
    {
         TimeEntry t;
         t.time1 = q.value("time1").toString();
         t.time2 = q.value("time2").toString();
+        t.date  = q.value("date").toString();
+        t.id    = q.value("key").toULongLong();
         tm << t;
    }
+}
+
+void MainWindow::fillTable()
+{
+    ui->tblTime->clear();
+    ui->tblTime->setColumnCount(3);
+    ui->tblTime->setRowCount(times.count());
+    ui->tblTime->setHorizontalHeaderItem(0, new QTableWidgetItem("Дата"));
+    ui->tblTime->setHorizontalHeaderItem(1, new QTableWidgetItem("Время 1"));
+    ui->tblTime->setHorizontalHeaderItem(2, new QTableWidgetItem("Время 2"));
+    int row = 0;
+    for (auto it = times.begin(); it != times.end(); ++it, row++)
+    {
+        ui->tblTime->setItem(row, 0, new QTableWidgetItem(it->date));
+        ui->tblTime->setItem(row, 1, new QTableWidgetItem(it->time1));
+        ui->tblTime->setItem(row, 2, new QTableWidgetItem(it->time2));
+    }
 }
 
 void MainWindow::setBtnSetTimeMode()

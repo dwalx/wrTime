@@ -21,6 +21,8 @@ private:
     {
         QString time1;
         QString time2;
+        QString date;
+        quint64 id;
     };
 
     Ui::MainWindow *ui;
@@ -37,6 +39,7 @@ private:
     int  calcTimeMonth(int month, int year);
     void closeEvent(QCloseEvent *event);
     void loadTimeMonth(QList<TimeEntry> &tm, int month, int year);
+    void fillTable();
 
     void setBtnSetTimeMode();
     int  iBtnSetTimeMode;
