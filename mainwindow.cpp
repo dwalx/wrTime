@@ -179,10 +179,10 @@ void MainWindow::setBtnSetTimeMode()
     q.exec(sql);
     if (q.next())
     {
-        if (q.value("time2").isNull()) iBtnSetTimeMode = btnSetTimeModeTime2;
-        else iBtnSetTimeMode = btnSetTimeModeTime1;
+        if (q.value("time2").isNull()) iBtnSetTimeMode = btnSetTimeModeTime2;        
         u64Time2Id = q.value("key").toULongLong();
     }
+    else iBtnSetTimeMode = btnSetTimeModeTime1;
     switch (iBtnSetTimeMode)
     {
         case btnSetTimeModeTime1: ui->btnSetTime->setText("Добавить"); break;
