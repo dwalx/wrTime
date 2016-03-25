@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QtSql>
+#include "wintimeedit.h"
 
 namespace Ui {
 class MainWindow;
@@ -24,6 +25,8 @@ private:
         QString date;
         quint64 id;
     };
+
+    WinTimeEdit* frmTimeEdit;
 
     Ui::MainWindow *ui;
     QSqlDatabase db;
@@ -50,6 +53,7 @@ private:
 private slots:
 
     void on_btnSetTime_clicked();
+    void on_btnTimeEdit_clicked();
 };
 
 #endif // MAINWINDOW_H

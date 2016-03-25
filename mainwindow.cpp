@@ -8,6 +8,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    frmTimeEdit = new WinTimeEdit(this);
+
+
     QDate date = QDate::currentDate();
     ui->cbMonth->setCurrentIndex(date.month()-1);
     ui->sbYear->setValue(date.year());
@@ -223,4 +226,9 @@ void MainWindow::on_btnSetTime_clicked()
         case btnSetTimeModeTime2: break;
     }
     setBtnSetTimeMode();
+}
+
+void MainWindow::on_btnTimeEdit_clicked()
+{
+    frmTimeEdit->show();
 }
