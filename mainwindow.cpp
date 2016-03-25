@@ -86,6 +86,7 @@ void MainWindow::resetSettings()
     settings["lunch_end"  ] = "13:00";
     calcSettingsValues();
 }
+
 void MainWindow::calcSettingsValues()
 {
     QTime wday_begin  = QTime::fromString(settings["wday_begin" ], "hh:mm");
@@ -98,6 +99,7 @@ void MainWindow::calcSettingsValues()
                                                - settings["lunch_len_ms"].toInt()) );
     settings["wday_len"    ] = QString::number(settings["wday_len_ms"].toInt() / (60*1000));
 }
+
 void MainWindow::loadSettings()
 {
     resetSettings();
@@ -109,9 +111,8 @@ void MainWindow::loadSettings()
 
 void MainWindow::saveSettings()
 {
-    QSqlQuery q;
-    QMap<QString, QString>::iterator it = settings.begin();
-    for (; it != settings.end(); ++it)
+    QSqlQuery q;    
+    for (auto it = settings.begin(); it != settings.end(); ++it)
     {
         QString sql;
         sql = QString("select count(name) from wrsettings where name='%1';").arg(it.key());
@@ -121,7 +122,7 @@ void MainWindow::saveSettings()
             sql = QString("insert into wrsettings(name, value) values('%1', '%2');").arg(it.key()).arg(it.value());
         else
             sql = QString("update wrsettings set value = '%1' where name = '%2';").arg(it.value()).arg(it.key());
-        q.exec(sql);
+        q.exec(sql);        
     }
 }
 
@@ -140,11 +141,11 @@ int MainWindow::calcWorkMinutes(QList<TimeEntry> &tm)
     if (tm.isEmpty()) return 0;
     int ms = 0;
     QTime lunch_begin = QTime::fromString(settings["lunch_begin"], "hh:mm");
-    QTime lunch_end   = QTime::fromString(settings["lunch_end"  ], "hh:mm");    
-    for (auto it = tm.begin(); it != tm.end(); ++it)
+    QTime lunch_end   = QTime::fromString(settings["lunch_end"  ], "hh:mm");        
+    for (auto it: tm)
     {
-        QTime t1 = QTime::fromString(it->time1, "hh:mm");
-        QTime t2 = QTime::fromString(it->time2, "hh:mm");
+        QTime t1 = QTime::fromString(it.time1, "hh:mm");
+        QTime t2 = QTime::fromString(it.time2, "hh:mm");
         if (t1 >= lunch_begin && t1 <= lunch_end) t1 = lunch_end;
         if (t2 >= lunch_begin && t2 <= lunch_end) t2 = lunch_begin;
         int tm_ms = t1.msecsTo(t2);
@@ -184,12 +185,12 @@ void MainWindow::fillTable()
     ui->tblTime->setHorizontalHeaderItem(0, new QTableWidgetItem("Дата"));
     ui->tblTime->setHorizontalHeaderItem(1, new QTableWidgetItem("Время 1"));
     ui->tblTime->setHorizontalHeaderItem(2, new QTableWidgetItem("Время 2"));
-    int row = 0;
-    for (auto it = times.begin(); it != times.end(); ++it, row++)
+    int row = 0;    
+    for (auto it: times)
     {
-        ui->tblTime->setItem(row, 0, new QTableWidgetItem(it->date));
-        ui->tblTime->setItem(row, 1, new QTableWidgetItem(it->time1));
-        ui->tblTime->setItem(row, 2, new QTableWidgetItem(it->time2));
+        ui->tblTime->setItem(row, 0, new QTableWidgetItem(it.date));
+        ui->tblTime->setItem(row, 1, new QTableWidgetItem(it.time1));
+        ui->tblTime->setItem(row++, 2, new QTableWidgetItem(it.time2));
     }
 }
 
