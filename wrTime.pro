@@ -14,8 +14,11 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    wintimeedit.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    wintimeedit.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    wintimeedit.ui
