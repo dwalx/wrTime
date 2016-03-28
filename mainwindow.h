@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QtSql>
+#include <QKeyEvent>
 #include "wintimeedit.h"
 
 namespace Ui {
@@ -24,6 +25,7 @@ private:
         QString time2;
         QString date;
         quint64 id;
+        bool    isNull;
     };
 
     WinTimeEdit* frmTimeEdit;
@@ -32,6 +34,7 @@ private:
     QSqlDatabase db;
     QMap<QString, QString> settings;
     QList<TimeEntry> times;
+    int  selectedRow;
     bool dbOpen();
     void dbClose();
     void loadSettings();
@@ -54,6 +57,15 @@ private slots:
 
     void on_btnSetTime_clicked();
     void on_btnTimeEdit_clicked();
+
+
+    void deleteRow(int row);
+    void deleteSelectedRow();
+
+    void on_tblTime_itemSelectionChanged();
+
+protected:
+    bool eventFilter(QObject* object, QEvent* event);
 };
 
 #endif // MAINWINDOW_H

@@ -14,6 +14,9 @@ class WinTimeEdit : public QDialog
 public:
     explicit WinTimeEdit(QWidget *parent = 0);
     ~WinTimeEdit();
+    QString date,
+            time1,
+            time2;
 
 private:
     Ui::WinTimeEdit *ui;

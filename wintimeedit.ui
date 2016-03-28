@@ -25,11 +25,17 @@
      <height>32</height>
     </rect>
    </property>
+   <property name="locale">
+    <locale language="Russian" country="Russia"/>
+   </property>
    <property name="orientation">
     <enum>Qt::Horizontal</enum>
    </property>
    <property name="standardButtons">
     <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+   </property>
+   <property name="centerButtons">
+    <bool>true</bool>
    </property>
   </widget>
  </widget>

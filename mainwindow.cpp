@@ -8,8 +8,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    frmTimeEdit = new WinTimeEdit(this);
+    ui->tblTime->installEventFilter(this);
 
+    frmTimeEdit = new WinTimeEdit(this);
 
     QDate date = QDate::currentDate();
     ui->cbMonth->setCurrentIndex(date.month()-1);
@@ -29,7 +30,7 @@ MainWindow::MainWindow(QWidget *parent) :
     setBtnSetTimeMode();
 
     loadTimeMonth(times, date.month(), date.year());
-    fillTable();
+    fillTable();    
 }
 
 int  MainWindow::calcTimeMonth(int month, int year)
@@ -46,6 +47,7 @@ int  MainWindow::calcTimeMonth(int month, int year)
     while (q.next()) cnt++;
     loadTimeMonth(tm, month, year);
     int m = calcWorkMinutes(tm)-cnt*settings["wday_len"].toInt();
+    if (m < 0) m = 0;
     return m;
 }
 
@@ -147,6 +149,7 @@ int MainWindow::calcWorkMinutes(QList<TimeEntry> &tm)
     QTime lunch_end   = QTime::fromString(settings["lunch_end"  ], "hh:mm");        
     for (auto it: tm)
     {
+        if (it.isNull) continue;
         QTime t1 = QTime::fromString(it.time1, "hh:mm");
         QTime t2 = QTime::fromString(it.time2, "hh:mm");
         if (t1 >= lunch_begin && t1 <= lunch_end) t1 = lunch_end;
@@ -166,16 +169,17 @@ void MainWindow::loadTimeMonth(QList<TimeEntry> &tm, int month, int year)
    QDate d(year, month, 1);
    d2.sprintf("%04d.%02d.%02d", year, month, d.daysInMonth());
 
-   QSqlQuery q;
-   QString sql = QString("select key, date, time1, time2 from wrtime where date >= '%1' and date <= '%2' and time1 is not null and time2 is not null ;").arg(d1).arg(d2);
+   QSqlQuery q;   
+   QString sql = QString("select key, date, time1, time2 from wrtime where date >= '%1' and date <= '%2';").arg(d1).arg(d2);
    q.exec(sql);
    while (q.next())
    {
         TimeEntry t;
-        t.time1 = q.value("time1").toString();
-        t.time2 = q.value("time2").toString();
-        t.date  = q.value("date").toString();
-        t.id    = q.value("key").toULongLong();
+        t.isNull = q.value("time1").isNull() || q.value("time2").isNull() || q.value("date").isNull();
+        t.time1  = q.value("time1").toString();
+        t.time2  = q.value("time2").toString();
+        t.date   = q.value("date").toString();
+        t.id     = q.value("key").toULongLong();
         tm << t;
    }
 }
@@ -196,6 +200,7 @@ void MainWindow::fillTable()
         ui->tblTime->setItem(row, 2, new QTableWidgetItem(it.time2));
         row++;
     }
+    emit on_tblTime_itemSelectionChanged();
 }
 
 void MainWindow::setBtnSetTimeMode()
@@ -230,5 +235,62 @@ void MainWindow::on_btnSetTime_clicked()
 
 void MainWindow::on_btnTimeEdit_clicked()
 {
-    frmTimeEdit->show();
+    frmTimeEdit->setModal(true);
+    int row = ui->tblTime->currentRow();
+    frmTimeEdit->date  = times[row].date;
+    frmTimeEdit->time1 = times[row].time1;
+    frmTimeEdit->time2 = times[row].time2;
+    frmTimeEdit->exec();
+    if (frmTimeEdit->result())
+    {
+        times[row].date  = frmTimeEdit->date;
+        times[row].time1 = frmTimeEdit->time1;
+        times[row].time2 = frmTimeEdit->time2;
+        QString sql = QString("update wrtime set date='%1', time1='%2', time2='%3' where key=%4").arg(times[row].date).arg(times[row].time1).arg(times[row].time2).arg(times[row].id);
+        QSqlQuery q;
+        q.exec(sql);
+        ui->tblTime->item(row,0)->setText(times[row].date);
+        ui->tblTime->item(row,1)->setText(times[row].time1);
+        ui->tblTime->item(row,2)->setText(times[row].time2);
+    }
+}
+
+bool MainWindow::eventFilter(QObject* object, QEvent* event)
+{
+    bool handled = false;
+    if (object == ui->tblTime && event->type() == QEvent::KeyPress)
+    {
+        QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
+        bool flg = false;
+        switch (keyEvent->key())
+        {
+        case Qt::Key_Delete: emit deleteSelectedRow(); handled = true; break;
+        case Qt::Key_Insert: break;
+        }
+
+    }
+    return handled ? true : QWidget::eventFilter(object, event);
+}
+
+void MainWindow::deleteSelectedRow()
+{
+    deleteRow(ui->tblTime->currentRow());
+}
+
+void MainWindow::deleteRow(int row)
+{
+    if (row < 0 || row > times.count()) return;
+    QString sql = QString("delete from wrtime where key = %1").arg(times[row].id);
+    QSqlQuery q;
+    q.exec(sql);
+    ui->tblTime->removeRow(row);
+    times.removeAt(row);
+}
+
+void MainWindow::on_tblTime_itemSelectionChanged()
+{
+    bool validSelection = ui->tblTime->currentRow() >= 0 &&
+                          ui->tblTime->currentRow() <  ui->tblTime->rowCount();
+    ui->btnTimeDelete->setEnabled(validSelection);
+    ui->btnTimeEdit->setEnabled(validSelection);
 }
