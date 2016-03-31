@@ -64,6 +64,8 @@ private slots:
 
     void on_tblTime_itemSelectionChanged();
 
+    void on_tabWidget_currentChanged(int index);
+
 protected:
     bool eventFilter(QObject* object, QEvent* event);
 };

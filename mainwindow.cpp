@@ -294,3 +294,8 @@ void MainWindow::on_tblTime_itemSelectionChanged()
     ui->btnTimeDelete->setEnabled(validSelection);
     ui->btnTimeEdit->setEnabled(validSelection);
 }
+
+void MainWindow::on_tabWidget_currentChanged(int index)
+{
+    if (index == 0) setBtnSetTimeMode();
+}
