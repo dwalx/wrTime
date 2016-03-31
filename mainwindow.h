@@ -2,9 +2,11 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QtWidgets>
 #include <QtSql>
 #include <QKeyEvent>
 #include "wintimeedit.h"
+#include "timevalidator.h"
 
 namespace Ui {
 class MainWindow;
@@ -65,6 +67,10 @@ private slots:
     void on_tblTime_itemSelectionChanged();
 
     void on_tabWidget_currentChanged(int index);
+
+    void on_btnTimeCreate_clicked();
+
+    void on_btnTimeDelete_clicked();
 
 protected:
     bool eventFilter(QObject* object, QEvent* event);

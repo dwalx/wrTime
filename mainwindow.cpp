@@ -30,7 +30,9 @@ MainWindow::MainWindow(QWidget *parent) :
     setBtnSetTimeMode();
 
     loadTimeMonth(times, date.month(), date.year());
-    fillTable();    
+    fillTable();
+
+    ui->lineEdit->setValidator(new TimeValidator(this));
 }
 
 int  MainWindow::calcTimeMonth(int month, int year)
@@ -217,18 +219,17 @@ void MainWindow::setBtnSetTimeMode()
     else iBtnSetTimeMode = btnSetTimeModeTime1;
     switch (iBtnSetTimeMode)
     {
-        case btnSetTimeModeTime1: ui->btnSetTime->setText("Добавить"); break;
-        case btnSetTimeModeTime2: ui->btnSetTime->setText("Закрыть"); break;
+    case btnSetTimeModeTime1: ui->btnSetTime->setText("Добавить"); break;
+    case btnSetTimeModeTime2: ui->btnSetTime->setText("Закрыть"); break;
     }
 }
 
 void MainWindow::on_btnSetTime_clicked()
 {
-
     switch (iBtnSetTimeMode)
     {
-        case btnSetTimeModeTime1: break;
-        case btnSetTimeModeTime2: break;
+    case btnSetTimeModeTime1: break;
+    case btnSetTimeModeTime2: break;
     }
     setBtnSetTimeMode();
 }
@@ -274,7 +275,13 @@ bool MainWindow::eventFilter(QObject* object, QEvent* event)
 
 void MainWindow::deleteSelectedRow()
 {
-    deleteRow(ui->tblTime->currentRow());
+    QMessageBox* pmbx = new QMessageBox("Удаление",
+                                        "Удалить выбранную запись о времени?",
+                                        QMessageBox::Information,
+                                        QMessageBox::NoButton,
+                                        QMessageBox::Yes,
+                                        QMessageBox::No);
+    if (pmbx->exec() == QMessageBox::Yes) deleteRow(ui->tblTime->currentRow());
 }
 
 void MainWindow::deleteRow(int row)
@@ -298,4 +305,14 @@ void MainWindow::on_tblTime_itemSelectionChanged()
 void MainWindow::on_tabWidget_currentChanged(int index)
 {
     if (index == 0) setBtnSetTimeMode();
+}
+
+void MainWindow::on_btnTimeCreate_clicked()
+{
+
+}
+
+void MainWindow::on_btnTimeDelete_clicked()
+{
+
 }

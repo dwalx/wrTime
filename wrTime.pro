@@ -15,10 +15,12 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    wintimeedit.cpp
+    wintimeedit.cpp \
+    timevalidator.cpp
 
 HEADERS  += mainwindow.h \
-    wintimeedit.h
+    wintimeedit.h \
+    timevalidator.h
 
 FORMS    += mainwindow.ui \
     wintimeedit.ui
