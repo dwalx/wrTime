@@ -316,3 +316,27 @@ void MainWindow::on_btnTimeDelete_clicked()
 {
 
 }
+
+void MainWindow::validateTimeInput(QString str)
+{
+    TimeValidator tm;
+    qDebug() << "aaaaaaa";
+}
+
+void MainWindow::on_pushButton_clicked()
+{
+    QInputDialog *dlg = new QInputDialog(this);
+    dlg->setInputMode(QInputDialog::TextInput);
+    dlg->setWindowTitle("Время");
+    dlg->setLabelText("Введите время:");
+    dlg->setOkButtonText("Ok");
+    dlg->setCancelButtonText("Отмена");
+    QLineEdit *le = dlg->findChild<QLineEdit*>();
+    connect(le, SIGNAL(textChanged(const QString&)), this, SLOT(validateTimeInput(QString)));
+    le->setText("11:22");
+    le->setInputMask("09:09");
+    le->setValidator(new TimeValidator(dlg));
+    int res = dlg->exec();
+    qDebug() << res;
+
+}
