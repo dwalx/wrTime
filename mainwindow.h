@@ -50,6 +50,7 @@ private:
     void fillTable();
 
     void setBtnSetTimeMode();
+    QString inputTime(QString s = "", int min = 0);
     int  iBtnSetTimeMode;
     quint64 u64Time2Id;
     static const int btnSetTimeModeTime1 = 1;

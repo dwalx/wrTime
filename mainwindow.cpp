@@ -91,6 +91,8 @@ void MainWindow::resetSettings()
     settings["wday_end"   ] = "17:00";
     settings["lunch_begin"] = "12:00";
     settings["lunch_end"  ] = "13:00";
+    settings["sub_minutes"] = "-5";
+    settings["add_minutes"] = "-5";
     calcSettingsValues();
 }
 
@@ -317,9 +319,16 @@ void MainWindow::on_btnTimeDelete_clicked()
 
 }
 
-void MainWindow::on_pushButton_clicked()
+QString MainWindow::inputTime(QString s, int min)
 {
-    QInputDialog *dlg = new QInputDialog(this);
+    QTime t = s == "" ? QTime::currentTime() : QTime::fromString(s, "hh:mm");
+    t = t.addSecs(min * 60);
+    s.sprintf("%02d:%02d",t.hour(),t.minute());
+
+    Qt::WindowFlags flags = Qt::Dialog |  Qt::CustomizeWindowHint | Qt::WindowTitleHint |
+                            Qt::WindowCloseButtonHint | Qt::WindowSystemMenuHint;
+    QInputDialog *dlg = new QInputDialog(this, flags);
+
     QString ok("Ок"),
             cancel("Отмена");
     dlg->setInputMode(QInputDialog::TextInput);
@@ -327,26 +336,32 @@ void MainWindow::on_pushButton_clicked()
     dlg->setLabelText("Введите время:");
     dlg->setOkButtonText(ok);
     dlg->setCancelButtonText(cancel);
+    dlg->setTextValue(s);
+
     QLineEdit *le = dlg->findChild<QLineEdit*>();
     QList<QPushButton*> btns = dlg->findChildren<QPushButton*>();
     QPushButton *btn = NULL;
     for (auto b: btns)
         if (b->text() == ok) btn = b;
 
-    connect(le, &QLineEdit::textChanged, this, [ btn ] (QString str) {
+    auto dis = [btn] (QString str)
+    {
         TimeValidator tm;
         int pos = 5;
         QValidator::State st = tm.validate(str, pos);
         btn->setEnabled(st == QValidator::Acceptable);
-    }  );
+    };
+    connect(le, &QLineEdit::textChanged, this, dis);
 
-    le->setText("11:22");
     le->setInputMask("09:09");
     le->setValidator(new TimeValidator(dlg));
-    if (dlg->exec() == QDialog::Accepted)
-    {
-        // we do it!!!
-    }
-
+    QString res = "";
+    if (dlg->exec() == QDialog::Accepted) res = dlg->textValue();
     delete dlg;
+    return res;
+}
+
+void MainWindow::on_pushButton_clicked()
+{
+    inputTime("", settings["sub_minutes"].toInt());
 }
