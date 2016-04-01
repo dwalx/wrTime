@@ -317,26 +317,36 @@ void MainWindow::on_btnTimeDelete_clicked()
 
 }
 
-void MainWindow::validateTimeInput(QString str)
-{
-    TimeValidator tm;
-    qDebug() << "aaaaaaa";
-}
-
 void MainWindow::on_pushButton_clicked()
 {
     QInputDialog *dlg = new QInputDialog(this);
+    QString ok("Ок"),
+            cancel("Отмена");
     dlg->setInputMode(QInputDialog::TextInput);
     dlg->setWindowTitle("Время");
     dlg->setLabelText("Введите время:");
-    dlg->setOkButtonText("Ok");
-    dlg->setCancelButtonText("Отмена");
+    dlg->setOkButtonText(ok);
+    dlg->setCancelButtonText(cancel);
     QLineEdit *le = dlg->findChild<QLineEdit*>();
-    connect(le, SIGNAL(textChanged(const QString&)), this, SLOT(validateTimeInput(QString)));
+    QList<QPushButton*> btns = dlg->findChildren<QPushButton*>();
+    QPushButton *btn = NULL;
+    for (auto b: btns)
+        if (b->text() == ok) btn = b;
+
+    connect(le, &QLineEdit::textChanged, this, [ btn ] (QString str) {
+        TimeValidator tm;
+        int pos = 5;
+        QValidator::State st = tm.validate(str, pos);
+        btn->setEnabled(st == QValidator::Acceptable);
+    }  );
+
     le->setText("11:22");
     le->setInputMask("09:09");
     le->setValidator(new TimeValidator(dlg));
-    int res = dlg->exec();
-    qDebug() << res;
+    if (dlg->exec() == QDialog::Accepted)
+    {
+        // we do it!!!
+    }
 
+    delete dlg;
 }

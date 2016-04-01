@@ -73,7 +73,7 @@ private slots:
     void on_btnTimeDelete_clicked();
 
     void on_pushButton_clicked();
-    void validateTimeInput(QString str);
+
 
 protected:
     bool eventFilter(QObject* object, QEvent* event);
