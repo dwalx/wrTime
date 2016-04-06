@@ -209,7 +209,7 @@ void MainWindow::fillTable()
 
 void MainWindow::setBtnSetTimeMode()
 {
-    QString today = QDate::currentDate().toString("yyyy.MM.dd");;
+    QString today = QDate::currentDate().toString("yyyy.MM.dd");
     QSqlQuery q;
     QString sql = QString("select key, time1, time2 from wrtime where date = '%1' order by time1 desc limit 1;").arg(today);
     q.exec(sql);
@@ -319,6 +319,70 @@ void MainWindow::on_btnTimeDelete_clicked()
 
 }
 
+bool MainWindow::inputTimeEntry(TimeEntry *te, QString title)
+{
+    bool res = false;
+    if (!te) return res;
+
+    QDialog *dlg = new QDialog(this);
+
+    QVBoxLayout *layoutV = new QVBoxLayout(dlg);
+    QHBoxLayout *layoutH = new QHBoxLayout(dlg);
+
+    QPushButton *btnCancel = new QPushButton(dlg);
+    QPushButton *btnOk     = new QPushButton(dlg);
+
+    QDateEdit *date  = new QDateEdit(dlg);
+    QTimeEdit *time1 = new QTimeEdit(dlg);
+    QTimeEdit *time2 = new QTimeEdit(dlg);
+
+    QLabel *lDate  = new QLabel(dlg);
+    QLabel *lTime1 = new QLabel(dlg);
+    QLabel *lTime2 = new QLabel(dlg);
+
+    layoutV->setMargin(20);
+    layoutV->addWidget(lDate);
+    layoutV->addWidget(date);
+
+    layoutV->addWidget(lTime1);
+    layoutV->addWidget(time1);
+
+    layoutV->addWidget(lTime2);
+    layoutV->addWidget(time2);
+    layoutV->addSpacing(10);
+
+    layoutV->addLayout(layoutH);
+    layoutH->setMargin(10);
+    layoutH->addWidget(btnCancel);
+    layoutH->addSpacing(30);
+    layoutH->addWidget(btnOk);
+    dlg->setLayout(layoutV);
+
+    dlg->setWindowTitle(title != "" ? title : "Редактирование записи");
+    btnCancel->setText("Отмена");
+    btnOk->setText("Ок");
+    date->setCalendarPopup(true);
+    lDate->setText("Дата:");
+    lTime1->setText("Время 1:");
+    lTime2->setText("Время 2:");
+    time1->setTime(QTime::fromString(te->time1,"hh:mm"));
+    time2->setTime(QTime::fromString(te->time2,"hh:mm"));
+    date->setDate(QDate::fromString(te->date,"yyyy.MM.dd"));
+
+    connect(btnCancel, SIGNAL(clicked()), dlg, SLOT(reject()));
+    connect(btnOk, SIGNAL(clicked()), dlg, SLOT(accept()));
+    if (dlg->exec() == QDialog::Accepted)
+    {
+        te->date  = date->date().toString("yyyy.MM.dd");
+        te->time1 = time1->time().toString("hh:mm");
+        te->time2 = time2->time().toString("hh:mm");
+        res = true;
+    }
+
+    delete dlg;
+    return res;
+}
+
 QString MainWindow::inputTime(QString s, int min)
 {
     QTime t = s == "" ? QTime::currentTime() : QTime::fromString(s, "hh:mm");
@@ -344,14 +408,14 @@ QString MainWindow::inputTime(QString s, int min)
     for (auto b: btns)
         if (b->text() == ok) btn = b;
 
-    auto dis = [btn] (QString str)
+    auto disableButton = [btn] (QString str)
     {
         TimeValidator tm;
         int pos = 5;
         QValidator::State st = tm.validate(str, pos);
         btn->setEnabled(st == QValidator::Acceptable);
     };
-    connect(le, &QLineEdit::textChanged, this, dis);
+    connect(le, &QLineEdit::textChanged, this, disableButton);
 
     le->setInputMask("09:09");
     le->setValidator(new TimeValidator(dlg));
@@ -363,5 +427,7 @@ QString MainWindow::inputTime(QString s, int min)
 
 void MainWindow::on_pushButton_clicked()
 {
-    inputTime("", settings["sub_minutes"].toInt());
+    //inputTime("", settings["sub_minutes"].toInt());
+    TimeEntry te;
+    inputTimeEntry(&te);
 }

@@ -437,6 +437,35 @@
          <string>PushButton</string>
         </property>
        </widget>
+       <widget class="QTimeEdit" name="timeEdit">
+        <property name="geometry">
+         <rect>
+          <x>60</x>
+          <y>160</y>
+          <width>118</width>
+          <height>27</height>
+         </rect>
+        </property>
+        <property name="displayFormat">
+         <string>HH:mm</string>
+        </property>
+       </widget>
+       <widget class="QDateEdit" name="dateEdit">
+        <property name="geometry">
+         <rect>
+          <x>60</x>
+          <y>200</y>
+          <width>151</width>
+          <height>27</height>
+         </rect>
+        </property>
+        <property name="displayFormat">
+         <string>dd.MM.yyyy</string>
+        </property>
+        <property name="calendarPopup">
+         <bool>true</bool>
+        </property>
+       </widget>
       </widget>
      </widget>
     </item>

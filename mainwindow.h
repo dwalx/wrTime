@@ -51,6 +51,7 @@ private:
 
     void setBtnSetTimeMode();
     QString inputTime(QString s = "", int min = 0);
+    bool inputTimeEntry(TimeEntry *te, QString title = "");
     int  iBtnSetTimeMode;
     quint64 u64Time2Id;
     static const int btnSetTimeModeTime1 = 1;
