@@ -313,7 +313,7 @@ void MainWindow::on_btnTimeCreate_clicked()
 {
 
 }
-
+mc
 void MainWindow::on_btnTimeDelete_clicked()
 {
 
@@ -427,7 +427,7 @@ QString MainWindow::inputTime(QString s, int min)
 
 void MainWindow::on_pushButton_clicked()
 {
-    inputTime("", settings["sub_minutes"].toInt());
+    //inputTime("", settings["sub_minutes"].toInt());
     TimeEntry te;
-    //inputTimeEntry(&te);
+    inputTimeEntry(&te);
 }

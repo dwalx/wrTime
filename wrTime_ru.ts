@@ -142,7 +142,7 @@
     <message>
         <location filename="mainwindow.cpp" line="396"/>
         <source>Ok</source>
-        <translation type="finished">Ок</translation>
+        <translation>Ок</translation>
     </message>
 </context>
 <context>
