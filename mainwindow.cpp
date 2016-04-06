@@ -393,7 +393,7 @@ QString MainWindow::inputTime(QString s, int min)
                             Qt::WindowCloseButtonHint | Qt::WindowSystemMenuHint;
     QInputDialog *dlg = new QInputDialog(this, flags);
 
-    QString ok("Ок"),
+    QString ok(tr("Ok")),
             cancel("Отмена");
     dlg->setInputMode(QInputDialog::TextInput);
     dlg->setWindowTitle("Время");
@@ -427,7 +427,7 @@ QString MainWindow::inputTime(QString s, int min)
 
 void MainWindow::on_pushButton_clicked()
 {
-    //inputTime("", settings["sub_minutes"].toInt());
+    inputTime("", settings["sub_minutes"].toInt());
     TimeEntry te;
-    inputTimeEntry(&te);
+    //inputTimeEntry(&te);
 }

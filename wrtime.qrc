@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/tr">
+        <file>qtbase_ru.qm</file>
+        <file>wrTime_ru.qm</file>
+    </qresource>
+</RCC>
