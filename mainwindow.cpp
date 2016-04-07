@@ -33,7 +33,14 @@ void MainWindow::setMonth(int pm, int py)
     ui->lcdDate->display(str);
 
     int mins = calcTimeMonth(m, y);
-    ui->lcdMinutes->display(QString::number(mins));
+    int hrs  = mins / 60;
+    mins %= 60;
+    QString mess;
+    if (hrs) mess.sprintf("%d:%02d", hrs, mins);
+    else mess.sprintf("%d", mins);
+
+    ui->lcdMinutes->display(mess);
+
     QPalette pal;
     pal.setColor(QPalette::WindowText, mins >= 0 ? Qt::green : Qt::red);
     ui->lcdMinutes->setPalette(pal);
