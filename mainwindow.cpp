@@ -313,7 +313,7 @@ void MainWindow::on_btnTimeCreate_clicked()
 {
 
 }
-mc
+
 void MainWindow::on_btnTimeDelete_clicked()
 {
 
