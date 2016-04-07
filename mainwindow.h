@@ -5,7 +5,6 @@
 #include <QtWidgets>
 #include <QtSql>
 #include <QKeyEvent>
-#include "wintimeedit.h"
 #include "timevalidator.h"
 
 namespace Ui {
@@ -28,9 +27,21 @@ private:
         QString date;
         quint64 id;
         bool    isNull;
+        TimeEntry()
+        {
+            isNull = false;
+            id     = (quint64)-1;
+        }
+        TimeEntry(const TimeEntry &tm)
+        {
+            time1  = tm.time1;
+            time2  = tm.time2;
+            date   = tm.date;
+            id     = tm.id;
+            isNull = tm.isNull;
+        }
     };
 
-    WinTimeEdit* frmTimeEdit;
 
     Ui::MainWindow *ui;
     QSqlDatabase db;

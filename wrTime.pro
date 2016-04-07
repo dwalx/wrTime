@@ -17,15 +17,12 @@ TRANSLATIONS    = wrTime_ru.ts \
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    wintimeedit.cpp \
     timevalidator.cpp
 
 HEADERS  += mainwindow.h \
-    wintimeedit.h \
     timevalidator.h
 
-FORMS    += mainwindow.ui \
-    wintimeedit.ui
+FORMS    += mainwindow.ui
 
 RESOURCES += \
     wrtime.qrc

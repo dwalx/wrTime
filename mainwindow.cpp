@@ -10,7 +10,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     ui->tblTime->installEventFilter(this);
 
-    frmTimeEdit = new WinTimeEdit(this);
 
     QDate date = QDate::currentDate();
     ui->cbMonth->setCurrentIndex(date.month()-1);
@@ -238,23 +237,17 @@ void MainWindow::on_btnSetTime_clicked()
 
 void MainWindow::on_btnTimeEdit_clicked()
 {
-    frmTimeEdit->setModal(true);
     int row = ui->tblTime->currentRow();
-    frmTimeEdit->date  = times[row].date;
-    frmTimeEdit->time1 = times[row].time1;
-    frmTimeEdit->time2 = times[row].time2;
-    frmTimeEdit->exec();
-    if (frmTimeEdit->result())
+    TimeEntry tm = times[row];
+    if (inputTimeEntry(&tm))
     {
-        times[row].date  = frmTimeEdit->date;
-        times[row].time1 = frmTimeEdit->time1;
-        times[row].time2 = frmTimeEdit->time2;
-        QString sql = QString("update wrtime set date='%1', time1='%2', time2='%3' where key=%4").arg(times[row].date).arg(times[row].time1).arg(times[row].time2).arg(times[row].id);
+        times[row] = tm;
+        ui->tblTime->item(row,0)->setText(tm.date);
+        ui->tblTime->item(row,1)->setText(tm.time1);
+        ui->tblTime->item(row,2)->setText(tm.time2);
+        QString sql = QString("update wrTime set time1='%2', time2='%3', date='%4' where key = %1;").arg(times[row].id).arg(times[row].time1).arg(times[row].time2).arg(times[row].date);
         QSqlQuery q;
         q.exec(sql);
-        ui->tblTime->item(row,0)->setText(times[row].date);
-        ui->tblTime->item(row,1)->setText(times[row].time1);
-        ui->tblTime->item(row,2)->setText(times[row].time2);
     }
 }
 
@@ -289,7 +282,7 @@ void MainWindow::deleteSelectedRow()
 void MainWindow::deleteRow(int row)
 {
     if (row < 0 || row > times.count()) return;
-    QString sql = QString("delete from wrtime where key = %1").arg(times[row].id);
+    QString sql = QString("delete from wrtime where key = %1;").arg(times[row].id);
     QSqlQuery q;
     q.exec(sql);
     ui->tblTime->removeRow(row);
