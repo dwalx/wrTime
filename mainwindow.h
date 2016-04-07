@@ -29,6 +29,7 @@ private:
         bool    isNull;
         TimeEntry()
         {
+            date = time1 = time2 = "";
             isNull = false;
             id     = (quint64)-1;
         }
@@ -59,6 +60,7 @@ private:
     void closeEvent(QCloseEvent *event);
     void loadTimeMonth(QList<TimeEntry> &tm, int month, int year);
     void fillTable();
+    void setMonth(int m = -1, int y = -1);
 
     void setBtnSetTimeMode();
     QString inputTime(QString s = "", int min = 0);
@@ -83,10 +85,12 @@ private slots:
 
     void on_btnTimeCreate_clicked();
 
-    void on_btnTimeDelete_clicked();
-
     void on_pushButton_clicked();
 
+
+    void on_cbMonth_currentIndexChanged(int index);
+
+    void on_sbYear_valueChanged(int arg1);
 
 protected:
     bool eventFilter(QObject* object, QEvent* event);

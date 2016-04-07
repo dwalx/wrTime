@@ -36,7 +36,7 @@
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>3</number>
+       <number>2</number>
       </property>
       <property name="tabsClosable">
        <bool>false</bool>
@@ -247,6 +247,9 @@
           </property>
           <item>
            <widget class="QTableWidget" name="tblTime">
+            <property name="editTriggers">
+             <set>QAbstractItemView::NoEditTriggers</set>
+            </property>
             <property name="selectionMode">
              <enum>QAbstractItemView::SingleSelection</enum>
             </property>
@@ -477,7 +480,7 @@
      <x>0</x>
      <y>0</y>
      <width>568</width>
-     <height>25</height>
+     <height>20</height>
     </rect>
    </property>
   </widget>

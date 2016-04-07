@@ -9,29 +9,37 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     ui->tblTime->installEventFilter(this);
-
+    ui->lineEdit->setValidator(new TimeValidator(this));
+    dbOpen();
 
     QDate date = QDate::currentDate();
     ui->cbMonth->setCurrentIndex(date.month()-1);
     ui->sbYear->setValue(date.year());
+
+
+    loadSettings();
+    setMonth();
+}
+
+void MainWindow::setMonth(int pm, int py)
+{
+    int m = pm,
+        y = py;
+    QDate date = QDate::currentDate();
+    if (m == -1) m = date.month();
+    if (y == -1) y = date.year();
     QString str;
     str.sprintf("%02d.%02d.%02d", date.day(), date.month(), date.year()-2000);
     ui->lcdDate->display(str);
-    dbOpen();
-    loadSettings();
 
-    int m = calcTimeMonth(date.month(), date.year());
-    ui->lcdMinutes->display(QString::number(m));
+    int mins = calcTimeMonth(m, y);
+    ui->lcdMinutes->display(QString::number(mins));
     QPalette pal;
-    pal.setColor(QPalette::WindowText, m >= 0 ? Qt::green : Qt::red);
+    pal.setColor(QPalette::WindowText, mins >= 0 ? Qt::green : Qt::red);
     ui->lcdMinutes->setPalette(pal);
-
     setBtnSetTimeMode();
-
-    loadTimeMonth(times, date.month(), date.year());
+    loadTimeMonth(times, m, y);
     fillTable();
-
-    ui->lineEdit->setValidator(new TimeValidator(this));
 }
 
 int  MainWindow::calcTimeMonth(int month, int year)
@@ -48,7 +56,7 @@ int  MainWindow::calcTimeMonth(int month, int year)
     while (q.next()) cnt++;
     loadTimeMonth(tm, month, year);
     int m = calcWorkMinutes(tm)-cnt*settings["wday_len"].toInt();
-    if (m < 0) m = 0;
+    //if (m < 0) m = 0;
     return m;
 }
 
@@ -91,7 +99,7 @@ void MainWindow::resetSettings()
     settings["lunch_begin"] = "12:00";
     settings["lunch_end"  ] = "13:00";
     settings["sub_minutes"] = "-5";
-    settings["add_minutes"] = "-5";
+    settings["add_minutes"] = "5";
     calcSettingsValues();
 }
 
@@ -167,13 +175,14 @@ int MainWindow::calcWorkMinutes(QList<TimeEntry> &tm)
 
 void MainWindow::loadTimeMonth(QList<TimeEntry> &tm, int month, int year)
 {
+   tm.clear();
    QString d1, d2;
    d1.sprintf("%04d.%02d.%02d", year, month, 1);
    QDate d(year, month, 1);
    d2.sprintf("%04d.%02d.%02d", year, month, d.daysInMonth());
 
    QSqlQuery q;   
-   QString sql = QString("select key, date, time1, time2 from wrtime where date >= '%1' and date <= '%2';").arg(d1).arg(d2);
+   QString sql = QString("select key, date, time1, time2 from wrtime where date >= '%1' and date <= '%2' order by date;").arg(d1).arg(d2);
    q.exec(sql);
    while (q.next())
    {
@@ -299,18 +308,35 @@ void MainWindow::on_tblTime_itemSelectionChanged()
 
 void MainWindow::on_tabWidget_currentChanged(int index)
 {
-    if (index == 0) setBtnSetTimeMode();
+    if (index == 0)
+    {
+        setBtnSetTimeMode();
+        setMonth(ui->cbMonth->currentIndex()+1, ui->sbYear->value());
+    }
 }
 
 void MainWindow::on_btnTimeCreate_clicked()
 {
-
+    TimeEntry tm;
+    tm.date  = QDate::currentDate().toString("yyyy.MM.dd");
+    tm.time1 = QTime::currentTime().toString("hh:mm");
+    tm.time2 = QTime::currentTime().addSecs(settings["add_minutes"].toInt() * 60).toString("hh:mm");
+    if (inputTimeEntry(&tm))
+    {
+        QString sql = QString("insert into wrTime(date, time1, time2) values('%1', '%2', '%3');").arg(tm.date).arg(tm.time1).arg(tm.time2);
+        QSqlQuery q;
+        q.exec(sql);
+        tm.isNull = false;
+        tm.id = q.lastInsertId().toULongLong();
+        times.append(tm);
+        ui->tblTime->setRowCount(times.count());
+        int row = times.count() - 1;
+        ui->tblTime->setItem(row, 0, new QTableWidgetItem(tm.date));
+        ui->tblTime->setItem(row, 1, new QTableWidgetItem(tm.time1));
+        ui->tblTime->setItem(row, 2, new QTableWidgetItem(tm.time2));
+    }
 }
 
-void MainWindow::on_btnTimeDelete_clicked()
-{
-
-}
 
 bool MainWindow::inputTimeEntry(TimeEntry *te, QString title)
 {
@@ -423,4 +449,14 @@ void MainWindow::on_pushButton_clicked()
     //inputTime("", settings["sub_minutes"].toInt());
     TimeEntry te;
     inputTimeEntry(&te);
+}
+
+void MainWindow::on_cbMonth_currentIndexChanged(int index)
+{
+    setMonth(index+1);
+}
+
+void MainWindow::on_sbYear_valueChanged(int arg1)
+{
+    setMonth(-1, arg1);
 }
