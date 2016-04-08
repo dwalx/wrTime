@@ -261,7 +261,7 @@ void MainWindow::on_btnSetTime_clicked()
         sql = QString("insert into wrtime(date, time1) values('%1', '%2');").arg(d).arg(t);
     }
     if (iBtnSetTimeMode == btnSetTimeModeTime2)
-            sql = QString("update wrtime set time2 = '%1' where key = '%2';").arg(t).arg(u64Time2Id);
+        sql = QString("update wrtime set time2 = '%1' where key = '%2';").arg(t).arg(u64Time2Id);
     q.exec(sql);
     setBtnSetTimeMode();
     setMonth(ui->cbMonth->currentIndex()+1, ui->sbYear->value());
@@ -418,7 +418,6 @@ bool MainWindow::inputTimeEntry(TimeEntry *te, QString title)
         te->time2 = time2->time().toString("hh:mm");
         res = true;
     }
-
     delete dlg;
     return res;
 }
@@ -467,12 +466,12 @@ QString MainWindow::inputTime(QString s, int min)
 
 void MainWindow::on_cbMonth_currentIndexChanged(int index)
 {
-    setMonth(index+1);
+    setMonth(index+1, ui->sbYear->value());
 }
 
 void MainWindow::on_sbYear_valueChanged(int arg1)
 {
-    setMonth(-1, arg1);
+    setMonth(ui->cbMonth->currentIndex(), arg1);
 }
 
 void MainWindow::on_tblTime_doubleClicked(const QModelIndex &index)
