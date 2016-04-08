@@ -32,8 +32,10 @@ void MainWindow::setMonth(int pm, int py)
     str.sprintf("%02d.%02d.%02d", date.day(), date.month(), date.year()-2000);
     ui->lcdDate->display(str);
 
-    int mins = calcTimeMonth(m, y);
-    int hrs  = mins / 60;
+    int mins  = calcTimeMonth(m, y);
+    int minus = mins < 0;
+    mins = abs(mins);
+    int hrs   = mins / 60;
     mins %= 60;
     QString mess;
     if (hrs) mess.sprintf("%d:%02d", hrs, mins);
@@ -42,7 +44,7 @@ void MainWindow::setMonth(int pm, int py)
     ui->lcdMinutes->display(mess);
 
     QPalette pal;
-    pal.setColor(QPalette::WindowText, mins >= 0 ? Qt::green : Qt::red);
+    pal.setColor(QPalette::WindowText, minus ? Qt::red : Qt::green);
     ui->lcdMinutes->setPalette(pal);
     setBtnSetTimeMode();
     loadTimeMonth(times, m, y);
@@ -249,12 +251,20 @@ void MainWindow::setBtnSetTimeMode()
 
 void MainWindow::on_btnSetTime_clicked()
 {
-    switch (iBtnSetTimeMode)
+    QString t = inputTime("", iBtnSetTimeMode == btnSetTimeModeTime1 ? settings["sub_minutes"].toInt() : settings["add_minutes"].toInt());
+    if (t == "") return;
+    QSqlQuery q;
+    QString sql;
+    if (iBtnSetTimeMode == btnSetTimeModeTime1)
     {
-    case btnSetTimeModeTime1: break;
-    case btnSetTimeModeTime2: break;
+        QString d = QDate::currentDate().toString("yyyy.MM.dd");
+        sql = QString("insert into wrtime(date, time1) values('%1', '%2');").arg(d).arg(t);
     }
+    if (iBtnSetTimeMode == btnSetTimeModeTime2)
+            sql = QString("update wrtime set time2 = '%1' where key = '%2';").arg(t).arg(u64Time2Id);
+    q.exec(sql);
     setBtnSetTimeMode();
+    setMonth(ui->cbMonth->currentIndex()+1, ui->sbYear->value());
 }
 
 void MainWindow::on_btnTimeEdit_clicked()
