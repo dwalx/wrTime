@@ -62,8 +62,7 @@ int  MainWindow::calcTimeMonth(int month, int year)
     int cnt = 0;
     while (q.next()) cnt++;
     loadTimeMonth(tm, month, year);
-    int m = calcWorkMinutes(tm)-cnt*settings["wday_len"].toInt();
-    //if (m < 0) m = 0;
+    int m = calcWorkMinutes(tm)-cnt*settings["wday_len"].toInt();    
     return m;
 }
 
@@ -163,13 +162,18 @@ int MainWindow::calcWorkMinutes(QList<TimeEntry> &tm)
 {
     if (tm.isEmpty()) return 0;
     int ms = 0;
+    //QTime wday_begin  = QTime::fromString(settings["wday_begin" ], "hh:mm");
+    QTime wday_end    = QTime::fromString(settings["wday_end"   ], "hh:mm");
     QTime lunch_begin = QTime::fromString(settings["lunch_begin"], "hh:mm");
-    QTime lunch_end   = QTime::fromString(settings["lunch_end"  ], "hh:mm");        
+    QTime lunch_end   = QTime::fromString(settings["lunch_end"  ], "hh:mm");
     for (auto it: tm)
-    {
-        if (it.isNull) continue;
+    {        
+        QTime z(0,0);
         QTime t1 = QTime::fromString(it.time1, "hh:mm");
         QTime t2 = QTime::fromString(it.time2, "hh:mm");
+        if (t1 == z) continue;
+        if (t2 == z) t2 = wday_end;
+
         if (t1 >= lunch_begin && t1 <= lunch_end) t1 = lunch_end;
         if (t2 >= lunch_begin && t2 <= lunch_end) t2 = lunch_begin;
         int tm_ms = t1.msecsTo(t2);
@@ -194,7 +198,6 @@ void MainWindow::loadTimeMonth(QList<TimeEntry> &tm, int month, int year)
    while (q.next())
    {
         TimeEntry t;
-        t.isNull = q.value("time1").isNull() || q.value("time2").isNull() || q.value("date").isNull();
         t.time1  = q.value("time1").toString();
         t.time2  = q.value("time2").toString();
         t.date   = q.value("date").toString();
@@ -224,13 +227,15 @@ void MainWindow::fillTable()
 
 void MainWindow::setBtnSetTimeMode()
 {
-    QString today = QDate::currentDate().toString("yyyy.MM.dd");
-    QSqlQuery q;
-    QString sql = QString("select key, time1, time2 from wrtime where date = '%1' order by time1 desc limit 1;").arg(today);
+    QSqlQuery q;    
+    QString sql = QString("select date, key, time1, time2 from wrtime where time2 is null or time2 = '00:00' order by date DESC;");
     q.exec(sql);
     if (q.next())
     {
-        if (q.value("time2").isNull()) iBtnSetTimeMode = btnSetTimeModeTime2;        
+        qDebug() << q.value("date").toString() << q.value("time1").toString() << q.value("time2").toString();
+        QTime z(0,0);
+        QTime t2 = QTime::fromString(q.value("time2").toString(), "hh:mm");
+        if (q.value("time2").isNull() || t2 == z) iBtnSetTimeMode = btnSetTimeModeTime2;
         u64Time2Id = q.value("key").toULongLong();
     }
     else iBtnSetTimeMode = btnSetTimeModeTime1;
@@ -272,8 +277,7 @@ bool MainWindow::eventFilter(QObject* object, QEvent* event)
     bool handled = false;
     if (object == ui->tblTime && event->type() == QEvent::KeyPress)
     {
-        QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
-        bool flg = false;
+        QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);        
         switch (keyEvent->key())
         {
         case Qt::Key_Delete: emit deleteSelectedRow(); handled = true; break;
@@ -333,7 +337,6 @@ void MainWindow::on_btnTimeCreate_clicked()
         QString sql = QString("insert into wrTime(date, time1, time2) values('%1', '%2', '%3');").arg(tm.date).arg(tm.time1).arg(tm.time2);
         QSqlQuery q;
         q.exec(sql);
-        tm.isNull = false;
         tm.id = q.lastInsertId().toULongLong();
         times.append(tm);
         ui->tblTime->setRowCount(times.count());
@@ -466,4 +469,9 @@ void MainWindow::on_cbMonth_currentIndexChanged(int index)
 void MainWindow::on_sbYear_valueChanged(int arg1)
 {
     setMonth(-1, arg1);
+}
+
+void MainWindow::on_tblTime_doubleClicked(const QModelIndex &index)
+{
+    emit on_btnTimeEdit_clicked();
 }

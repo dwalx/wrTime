@@ -26,20 +26,17 @@ private:
         QString time2;
         QString date;
         quint64 id;
-        bool    isNull;
         TimeEntry()
         {
             date = time1 = time2 = "";
-            isNull = false;
             id     = (quint64)-1;
         }
         TimeEntry(const TimeEntry &tm)
         {
-            time1  = tm.time1;
-            time2  = tm.time2;
-            date   = tm.date;
-            id     = tm.id;
-            isNull = tm.isNull;
+            time1   = tm.time1;
+            time2   = tm.time2;
+            date    = tm.date;
+            id      = tm.id;
         }
     };
 
@@ -91,6 +88,8 @@ private slots:
     void on_cbMonth_currentIndexChanged(int index);
 
     void on_sbYear_valueChanged(int arg1);
+
+    void on_tblTime_doubleClicked(const QModelIndex &index);
 
 protected:
     bool eventFilter(QObject* object, QEvent* event);
