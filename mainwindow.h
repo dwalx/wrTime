@@ -72,7 +72,6 @@ private slots:
     void on_btnSetTime_clicked();
     void on_btnTimeEdit_clicked();
 
-
     void deleteRow(int row);
     void deleteSelectedRow();
 
@@ -81,9 +80,6 @@ private slots:
     void on_tabWidget_currentChanged(int index);
 
     void on_btnTimeCreate_clicked();
-
-    void on_pushButton_clicked();
-
 
     void on_cbMonth_currentIndexChanged(int index);
 

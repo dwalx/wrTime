@@ -465,13 +465,6 @@ QString MainWindow::inputTime(QString s, int min)
     return res;
 }
 
-void MainWindow::on_pushButton_clicked()
-{
-    //inputTime("", settings["sub_minutes"].toInt());
-    TimeEntry te;
-    inputTimeEntry(&te);
-}
-
 void MainWindow::on_cbMonth_currentIndexChanged(int index)
 {
     setMonth(index+1);
