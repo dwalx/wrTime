@@ -70,6 +70,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 {
     saveSettings();
     dbClose();
+    event->setAccepted(true);
 }
 
 bool MainWindow::dbOpen()
@@ -473,5 +474,5 @@ void MainWindow::on_sbYear_valueChanged(int arg1)
 
 void MainWindow::on_tblTime_doubleClicked(const QModelIndex &index)
 {
-    emit on_btnTimeEdit_clicked();
+    if (index.isValid())  emit on_btnTimeEdit_clicked();
 }
