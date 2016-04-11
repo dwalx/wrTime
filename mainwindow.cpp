@@ -172,8 +172,9 @@ int MainWindow::calcWorkMinutes(QList<TimeEntry> &tm)
     for (auto it: tm)
     {        
         QTime z(0,0);
-        QTime t1 = QTime::fromString(it.time1, "hh:mm");
-        QTime t2 = QTime::fromString(it.time2, "hh:mm");
+        QTime t2, t1 = QTime::fromString(it.time1, "hh:mm");
+        if (it.time2 == "")  t2 = z;
+        else t2 = QTime::fromString(it.time2, "hh:mm");
         if (t1 == z) continue;
         if (t2 == z) t2 = wday_end;
 
@@ -203,6 +204,7 @@ void MainWindow::loadTimeMonth(QList<TimeEntry> &tm, int month, int year)
         TimeEntry t;
         t.time1  = q.value("time1").toString();
         t.time2  = q.value("time2").toString();
+        //if (t.time2 == "") t.time2 = "00:00";
         t.date   = q.value("date").toString();
         t.id     = q.value("key").toULongLong();
         tm << t;
