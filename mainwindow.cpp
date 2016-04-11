@@ -332,7 +332,7 @@ void MainWindow::on_tblTime_itemSelectionChanged()
 
 void MainWindow::on_tabWidget_currentChanged(int index)
 {
-    if (index == 0)
+    if (index == 0 || index == 2)
     {
         setBtnSetTimeMode();
         setMonth(ui->cbMonth->currentIndex()+1, ui->sbYear->value());
