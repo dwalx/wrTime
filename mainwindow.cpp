@@ -371,25 +371,21 @@ bool MainWindow::inputTimeEntry(TimeEntry *te, QString title)
     QVBoxLayout *layoutV = new QVBoxLayout(dlg);
     QHBoxLayout *layoutH = new QHBoxLayout(dlg);
 
-    QPushButton *btnCancel = new QPushButton(dlg);
-    QPushButton *btnOk     = new QPushButton(dlg);
+    QPushButton *btnCancel = new QPushButton("Отмена", dlg);
+    QPushButton *btnOk     = new QPushButton("Ок", dlg);
 
     QDateEdit *date  = new QDateEdit(dlg);
     QTimeEdit *time1 = new QTimeEdit(dlg);
     QTimeEdit *time2 = new QTimeEdit(dlg);
 
-    QLabel *lDate  = new QLabel(dlg);
-    QLabel *lTime1 = new QLabel(dlg);
-    QLabel *lTime2 = new QLabel(dlg);
-
     layoutV->setMargin(20);
-    layoutV->addWidget(lDate);
+    layoutV->addWidget(new QLabel("Дата:", dlg));
     layoutV->addWidget(date);
 
-    layoutV->addWidget(lTime1);
+    layoutV->addWidget(new QLabel("Время 1:", dlg));
     layoutV->addWidget(time1);
 
-    layoutV->addWidget(lTime2);
+    layoutV->addWidget(new QLabel("Время 2:", dlg));
     layoutV->addWidget(time2);
     layoutV->addSpacing(10);
 
@@ -401,12 +397,9 @@ bool MainWindow::inputTimeEntry(TimeEntry *te, QString title)
     dlg->setLayout(layoutV);
 
     dlg->setWindowTitle(title != "" ? title : "Редактирование записи");
-    btnCancel->setText("Отмена");
-    btnOk->setText("Ок");
+
     date->setCalendarPopup(true);
-    lDate->setText("Дата:");
-    lTime1->setText("Время 1:");
-    lTime2->setText("Время 2:");
+
     time1->setTime(QTime::fromString(te->time1,"hh:mm"));
     time2->setTime(QTime::fromString(te->time2,"hh:mm"));
     date->setDate(QDate::fromString(te->date,"yyyy.MM.dd"));
