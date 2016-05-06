@@ -8,17 +8,16 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    ui->tblTime->installEventFilter(this);
-    ui->lineEdit->setValidator(new TimeValidator(this));
+    ui->tblTime->installEventFilter(this);    
+
     dbOpen();
 
     QDate date = QDate::currentDate();
     ui->cbMonth->setCurrentIndex(date.month()-1);
     ui->sbYear->setValue(date.year());
 
-
     loadSettings();
-    setMonth();
+    setMonth();    
 }
 
 void MainWindow::setMonth(int pm, int py)
@@ -38,8 +37,7 @@ void MainWindow::setMonth(int pm, int py)
     int hrs   = mins / 60;
     mins %= 60;
     QString mess;
-    if (hrs) mess.sprintf("%d:%02d", hrs, mins);
-    else mess.sprintf("%d", mins);
+    mess.sprintf("%d:%02d", hrs, mins);
 
     ui->lcdMinutes->display(mess);
 
@@ -219,6 +217,10 @@ void MainWindow::fillTable()
     ui->tblTime->setHorizontalHeaderItem(0, new QTableWidgetItem("Дата"));
     ui->tblTime->setHorizontalHeaderItem(1, new QTableWidgetItem("Время 1"));
     ui->tblTime->setHorizontalHeaderItem(2, new QTableWidgetItem("Время 2"));
+    int w = (ui->tblTime->width() - 45) / 3;
+    ui->tblTime->setColumnWidth(0,w);
+    ui->tblTime->setColumnWidth(1,w);
+    ui->tblTime->setColumnWidth(2,w);
     int row = 0;    
     for (auto it: times)
     {
@@ -247,7 +249,7 @@ void MainWindow::setBtnSetTimeMode()
     switch (iBtnSetTimeMode)
     {
     case btnSetTimeModeTime1: ui->btnSetTime->setText("Добавить"); break;
-    case btnSetTimeModeTime2: ui->btnSetTime->setText("Закрыть"); break;
+    case btnSetTimeModeTime2: ui->btnSetTime->setText("Завершить"); break;
     }
 }
 
@@ -330,14 +332,6 @@ void MainWindow::on_tblTime_itemSelectionChanged()
     ui->btnTimeEdit->setEnabled(validSelection);
 }
 
-void MainWindow::on_tabWidget_currentChanged(int index)
-{
-    if (index == 0 || index == 2)
-    {
-        setBtnSetTimeMode();
-        setMonth(ui->cbMonth->currentIndex()+1, ui->sbYear->value());
-    }
-}
 
 void MainWindow::on_btnTimeCreate_clicked()
 {

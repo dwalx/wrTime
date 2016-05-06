@@ -77,8 +77,6 @@ private slots:
 
     void on_tblTime_itemSelectionChanged();
 
-    void on_tabWidget_currentChanged(int index);
-
     void on_btnTimeCreate_clicked();
 
     void on_cbMonth_currentIndexChanged(int index);
