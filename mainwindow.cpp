@@ -251,8 +251,8 @@ void MainWindow::setBtnSetTimeMode()
     else iBtnSetTimeMode = btnSetTimeModeTime1;
     switch (iBtnSetTimeMode)
     {
-    case btnSetTimeModeTime1: ui->btnSetTime->setText("Приход"); break;
-    case btnSetTimeModeTime2: ui->btnSetTime->setText("Уход"); break;
+    case btnSetTimeModeTime1: ui->btnSetTime->setText("Добавить приход"); break;
+    case btnSetTimeModeTime2: ui->btnSetTime->setText("Добавить уход"); break;
     }
 }
 
