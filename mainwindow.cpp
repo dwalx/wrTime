@@ -18,6 +18,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     loadSettings();
     setMonth();    
+
+    ui->lblBuild->setText(QString("build date: ") + __DATE__ + " " + __TIME__);
+
 }
 
 void MainWindow::setMonth(int pm, int py)
@@ -215,8 +218,8 @@ void MainWindow::fillTable()
     ui->tblTime->setColumnCount(3);
     ui->tblTime->setRowCount(times.count());
     ui->tblTime->setHorizontalHeaderItem(0, new QTableWidgetItem("Дата"));
-    ui->tblTime->setHorizontalHeaderItem(1, new QTableWidgetItem("Время 1"));
-    ui->tblTime->setHorizontalHeaderItem(2, new QTableWidgetItem("Время 2"));
+    ui->tblTime->setHorizontalHeaderItem(1, new QTableWidgetItem("Приход"));
+    ui->tblTime->setHorizontalHeaderItem(2, new QTableWidgetItem("Уход"));
     int w = (ui->tblTime->width() - 45) / 3;
     ui->tblTime->setColumnWidth(0,w);
     ui->tblTime->setColumnWidth(1,w);
@@ -248,8 +251,8 @@ void MainWindow::setBtnSetTimeMode()
     else iBtnSetTimeMode = btnSetTimeModeTime1;
     switch (iBtnSetTimeMode)
     {
-    case btnSetTimeModeTime1: ui->btnSetTime->setText("Добавить"); break;
-    case btnSetTimeModeTime2: ui->btnSetTime->setText("Завершить"); break;
+    case btnSetTimeModeTime1: ui->btnSetTime->setText("Приход"); break;
+    case btnSetTimeModeTime2: ui->btnSetTime->setText("Уход"); break;
     }
 }
 
@@ -376,10 +379,10 @@ bool MainWindow::inputTimeEntry(TimeEntry *te, QString title)
     layoutV->addWidget(new QLabel("Дата:", dlg));
     layoutV->addWidget(date);
 
-    layoutV->addWidget(new QLabel("Время 1:", dlg));
+    layoutV->addWidget(new QLabel("Приход:", dlg));
     layoutV->addWidget(time1);
 
-    layoutV->addWidget(new QLabel("Время 2:", dlg));
+    layoutV->addWidget(new QLabel("Уход:", dlg));
     layoutV->addWidget(time2);
     layoutV->addSpacing(10);
 
