@@ -26,3 +26,7 @@ FORMS    += mainwindow.ui
 
 RESOURCES += \
     wrtime.qrc
+
+win32 {
+   RC_FILE = wrtime.rc
+}
