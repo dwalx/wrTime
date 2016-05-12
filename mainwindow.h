@@ -73,7 +73,7 @@ private slots:
     void on_btnTimeEdit_clicked();
 
     void deleteRow(int row);
-    void deleteSelectedRow();
+    bool deleteSelectedRow();
 
     void on_tblTime_itemSelectionChanged();
 

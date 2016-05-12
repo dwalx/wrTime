@@ -308,7 +308,7 @@ bool MainWindow::eventFilter(QObject* object, QEvent* event)
     return handled ? true : QWidget::eventFilter(object, event);
 }
 
-void MainWindow::deleteSelectedRow()
+bool MainWindow::deleteSelectedRow()
 {
     QMessageBox* pmbx = new QMessageBox("Удаление",
                                         "Удалить выбранную запись о времени?",
@@ -316,7 +316,12 @@ void MainWindow::deleteSelectedRow()
                                         QMessageBox::NoButton,
                                         QMessageBox::Yes,
                                         QMessageBox::No);
-    if (pmbx->exec() == QMessageBox::Yes) deleteRow(ui->tblTime->currentRow());
+    if (pmbx->exec() == QMessageBox::Yes)
+    {
+        deleteRow(ui->tblTime->currentRow());
+        return true;
+    }
+    return false;
 }
 
 void MainWindow::deleteRow(int row)
@@ -477,7 +482,9 @@ void MainWindow::on_tblTime_doubleClicked(const QModelIndex &index)
 
 void MainWindow::on_btnTimeDelete_clicked()
 {
-    deleteSelectedRow();
-    setBtnSetTimeMode();
-    setMonth(ui->cbMonth->currentIndex()+1, ui->sbYear->value());
+    if (deleteSelectedRow())
+    {
+        setBtnSetTimeMode();
+        setMonth(ui->cbMonth->currentIndex()+1, ui->sbYear->value());
+    }
 }
