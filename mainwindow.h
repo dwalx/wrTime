@@ -85,6 +85,8 @@ private slots:
 
     void on_tblTime_doubleClicked(const QModelIndex &index);
 
+    void on_btnTimeDelete_clicked();
+
 protected:
     bool eventFilter(QObject* object, QEvent* event);
 };

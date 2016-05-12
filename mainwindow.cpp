@@ -287,6 +287,8 @@ void MainWindow::on_btnTimeEdit_clicked()
         QString sql = QString("update wrTime set time1='%2', time2='%3', date='%4' where key = %1;").arg(times[row].id).arg(times[row].time1).arg(times[row].time2).arg(times[row].date);
         QSqlQuery q;
         q.exec(sql);
+        setBtnSetTimeMode();
+        setMonth(ui->cbMonth->currentIndex()+1, ui->sbYear->value());
     }
 }
 
@@ -354,6 +356,8 @@ void MainWindow::on_btnTimeCreate_clicked()
         ui->tblTime->setItem(row, 0, new QTableWidgetItem(tm.date));
         ui->tblTime->setItem(row, 1, new QTableWidgetItem(tm.time1));
         ui->tblTime->setItem(row, 2, new QTableWidgetItem(tm.time2));
+        setBtnSetTimeMode();
+        setMonth(ui->cbMonth->currentIndex()+1, ui->sbYear->value());
     }
 }
 
@@ -469,4 +473,11 @@ void MainWindow::on_sbYear_valueChanged(int arg1)
 void MainWindow::on_tblTime_doubleClicked(const QModelIndex &index)
 {
     if (index.isValid())  emit on_btnTimeEdit_clicked();
+}
+
+void MainWindow::on_btnTimeDelete_clicked()
+{
+    deleteSelectedRow();
+    setBtnSetTimeMode();
+    setMonth(ui->cbMonth->currentIndex()+1, ui->sbYear->value());
 }
