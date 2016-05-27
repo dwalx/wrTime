@@ -19,7 +19,7 @@ MainWindow::MainWindow(QWidget *parent) :
     loadSettings();
     setMonth();    
 
-    ui->lblBuild->setText(QString("build date: ") + __DATE__ + " " + __TIME__);
+    ui->lblBuild->setText(QString("build date: ") + QString(__DATE__).toLower() + " " + __TIME__);
 
 }
 
@@ -232,6 +232,7 @@ void MainWindow::fillTable()
         ui->tblTime->setItem(row, 2, new QTableWidgetItem(it.time2));
         row++;
     }
+    ui->tblTime->scrollToBottom();
     emit on_tblTime_itemSelectionChanged();
 }
 
